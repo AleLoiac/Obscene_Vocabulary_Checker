@@ -11,7 +11,10 @@ var fileName string
 
 func main() {
 
-	fmt.Scan(&fileName)
+	_, err := fmt.Scan(&fileName)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
 
 	file, err := os.Open(fileName)
 	if err != nil {

@@ -13,7 +13,7 @@ var word string
 
 func printWords(file *os.File) { //prints all names in the file on a different row
 
-	scanner := bufio.NewScanner(file) // create a new Scanner for the file
+	scanner := bufio.NewScanner(file)
 
 	scanner.Split(bufio.ScanWords)
 
@@ -44,7 +44,7 @@ func censor(word string) {
 
 func checkWord(file *os.File) {
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(file) // creates a new Scanner for the file
 
 	scanner.Split(bufio.ScanWords)
 
@@ -76,18 +76,25 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 
+	file := readFile(fileName)
+	defer file.Close() //defer the closure
+
 	for {
-
-		file := readFile(fileName)
-		defer file.Close() //defer the closure
-
 		_, err2 := fmt.Scan(&word)
 		if err2 != nil {
 			log.Fatalf("error: %v", err2)
 		}
 		if strings.ToLower(word) == "exit" {
+			fmt.Println("Bye!")
 			break
 		}
 		checkWord(file)
+
+		// reset the position of the file back to the start after each iteration of the loop,
+		//so that the bufio.Scanner reads the contents of the file from the beginning each time.
+		_, err3 := file.Seek(0, 0)
+		if err3 != nil {
+			return
+		}
 	}
 }

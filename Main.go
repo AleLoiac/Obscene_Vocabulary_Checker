@@ -34,22 +34,35 @@ func readFile(fileName string) *os.File {
 	return file
 }
 
+func censor(word string) {
+	wordLen := len(word)
+	for i := 0; i < wordLen; i++ {
+		fmt.Print("*")
+	}
+	fmt.Println()
+}
+
 func checkWord(file *os.File) {
 
 	scanner := bufio.NewScanner(file)
 
 	scanner.Split(bufio.ScanWords)
 
-	x := ""
+	var obscene bool
+
 	for scanner.Scan() {
 		if strings.ToLower(scanner.Text()) == strings.ToLower(word) {
-			x = "True"
+			obscene = true
 			break
 		} else {
-			x = "False"
+			obscene = false
 		}
 	}
-	fmt.Println(x)
+	if obscene == true {
+		censor(word)
+	} else {
+		fmt.Println(word)
+	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -58,13 +71,23 @@ func checkWord(file *os.File) {
 
 func main() {
 
-	_, err := fmt.Scan(&fileName, &word)
+	_, err := fmt.Scan(&fileName)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
-	file := readFile(fileName)
-	defer file.Close() //defer the closure
+	for {
 
-	checkWord(file)
+		file := readFile(fileName)
+		defer file.Close() //defer the closure
+
+		_, err2 := fmt.Scan(&word)
+		if err2 != nil {
+			log.Fatalf("error: %v", err2)
+		}
+		if strings.ToLower(word) == "exit" {
+			break
+		}
+		checkWord(file)
+	}
 }

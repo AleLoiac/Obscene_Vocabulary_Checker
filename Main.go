@@ -42,7 +42,7 @@ func censor(word string) {
 	fmt.Print(" ")
 }
 
-func checkWord(file *os.File) {
+func checkSentence(file *os.File) {
 
 	scanner := bufio.NewScanner(file) // creates a new Scanner for the file
 	scanner.Split(bufio.ScanWords)
@@ -67,7 +67,6 @@ func checkWord(file *os.File) {
 			fmt.Print(sentenceScanner.Text() + " ")
 		}
 	}
-
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
@@ -92,7 +91,7 @@ func main() {
 			fmt.Println("Bye!")
 			break
 		}
-		checkWord(file)
+		checkSentence(file)
 
 		// reset the position of the file back to the start after each iteration of the loop,
 		// so that the bufio.Scanner reads the contents of the file from the beginning each time.

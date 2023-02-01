@@ -9,7 +9,7 @@ import (
 )
 
 var fileName string
-var word string
+var sentence string
 
 func printWords(file *os.File) { //prints all names in the file on a different row
 
@@ -39,29 +39,33 @@ func censor(word string) {
 	for i := 0; i < wordLen; i++ {
 		fmt.Print("*")
 	}
-	fmt.Println()
+	fmt.Print(" ")
 }
 
 func checkWord(file *os.File) {
 
 	scanner := bufio.NewScanner(file) // creates a new Scanner for the file
-
 	scanner.Split(bufio.ScanWords)
+
+	sentenceScanner := bufio.NewScanner(strings.NewReader(sentence))
+	sentenceScanner.Split(bufio.ScanWords)
 
 	var obscene bool
 
-	for scanner.Scan() {
-		if strings.ToLower(scanner.Text()) == strings.ToLower(word) {
-			obscene = true
-			break
-		} else {
-			obscene = false
+	for sentenceScanner.Scan() {
+		for scanner.Scan() {
+			if strings.ToLower(scanner.Text()) == strings.ToLower(sentenceScanner.Text()) {
+				obscene = true
+				break
+			} else {
+				obscene = false
+			}
 		}
-	}
-	if obscene == true {
-		censor(word)
-	} else {
-		fmt.Println(word)
+		if obscene == true {
+			censor(sentenceScanner.Text())
+		} else {
+			fmt.Print(sentenceScanner.Text() + " ")
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -80,11 +84,11 @@ func main() {
 	defer file.Close() //defer the closure
 
 	for {
-		_, err2 := fmt.Scan(&word)
+		_, err2 := fmt.Scan(&sentence)
 		if err2 != nil {
 			log.Fatalf("error: %v", err2)
 		}
-		if strings.ToLower(word) == "exit" {
+		if strings.ToLower(sentence) == "exit" {
 			fmt.Println("Bye!")
 			break
 		}

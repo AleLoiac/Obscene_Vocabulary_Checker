@@ -91,7 +91,7 @@ func main() {
 		checkWord(file)
 
 		// reset the position of the file back to the start after each iteration of the loop,
-		//so that the bufio.Scanner reads the contents of the file from the beginning each time.
+		// so that the bufio.Scanner reads the contents of the file from the beginning each time.
 		_, err3 := file.Seek(0, 0)
 		if err3 != nil {
 			return
